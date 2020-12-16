@@ -49,6 +49,7 @@
 
                                 <div v-if="template">
                                     <edit-template-component
+                                        v-on:switch-template="setTemplate($event)"
                                         v-bind:template="this.template"
                                         v-bind:store_template_endpoint="store_template_endpoint"></edit-template-component>
                                 </div>

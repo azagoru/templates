@@ -13,7 +13,7 @@
                             type="text"
                             title="Name"
                             placeholder="Name"
-                            v-model="template.name"/>
+                            v-model="name"/>
                 </div>
             </template>
             <template v-slot:modal-button>
@@ -26,7 +26,7 @@
             </template>
         </modal-component>
 
-        <a class="text-secondary text-sm" href="#" @click="updateShowModal(true)">
+        <a class="text-secondary text-sm" href="#" @click.prevent="updateShowModal(true)">
             <i class="fas fa-edit"></i>
             Edit name of template</a>
     </div>
@@ -41,6 +41,7 @@
             return {
                 showModal: false,
                 errors: [],
+                name: this.template.name
             }
         },
         props:
@@ -53,16 +54,19 @@
                 update() {
                     axios
                         .post(this.store_template_endpoint, {
-                            name: this.template.name,
+                            name: this.name,
                             id: this.template.id
                         })
                         .then(response =>
                         {
+                            this.$emit('switch-template', response.data);
+
                             this.showModal = false;
                         })
                         .catch(error => {
-
                             console.log('Error');
+
+                            this.name = this.template.name;
 
                             if (error.response.data.errors) {
                                 for (let [key, err] of Object.entries(error.response.data.errors)) {
@@ -74,6 +78,8 @@
                         });
                 },
                 updateShowModal(value) {
+                    this.name = this.template.name;
+
                     this.showModal = value;
                 }
             }
