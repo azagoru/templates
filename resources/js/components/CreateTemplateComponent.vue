@@ -57,6 +57,8 @@
                         {
                             this.$emit('switch-template', response.data);
 
+                            this.name = '';
+
                             this.showModal = false;
                         })
                         .catch(error => {

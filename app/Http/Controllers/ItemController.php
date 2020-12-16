@@ -16,9 +16,20 @@ class ItemController extends Controller
      */
     public function index(Request $request)
     {
-        return $request->has('template_id')
-            ? response(Template::find($request->get('template_id'))->items)
-            : response(Item::all());
+        if ($request->has('template_id')) {
+            $templateItems = Template::find($request->get('template_id'))->items;
+            if ($templateItems->count()) {
+                $templateItemsIds = $templateItems->pluck('id')->toArray();
+
+                $items = Item::whereNotIn('id', $templateItemsIds)->get();
+            } else {
+                $items = Item::all();
+            }
+        } else {
+            $items = Item::all();
+        }
+
+        return response($items);
     }
 
     public function getIndex(Request $request) : Response

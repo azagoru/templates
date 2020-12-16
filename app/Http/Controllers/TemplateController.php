@@ -7,6 +7,7 @@ use App\Http\Requests\TemplateUpdate;
 use App\Template;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
+use Illuminate\Support\Facades\Log;
 
 class TemplateController extends Controller
 {
@@ -49,7 +50,7 @@ class TemplateController extends Controller
         return response(Template::find($request->get('template_id'))->items);
     }
 
-    public function updateItems(Request $request) : bool
+    public function updateItems(Request $request) : Response
     {
         $template = Template::find($request->get('template_id'));
 
@@ -64,7 +65,7 @@ class TemplateController extends Controller
 
         $template->items()->sync($syncData);
 
-        return true;
+        return response($template->items);
     }
 
     /**

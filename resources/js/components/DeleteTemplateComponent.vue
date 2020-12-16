@@ -4,31 +4,23 @@
                 v-bind:show_modal="showModal"
                 v-bind:errors="errors"
                 v-on:show-modal="updateShowModal">
-            <template v-slot:modal-title>Edit template</template>
+            <template v-slot:modal-title>Delete template</template>
             <template v-slot:modal-body>
-                <div class="form-group">
-                    <input
-                            class="form-control"
-                            name="name"
-                            type="text"
-                            title="Name"
-                            placeholder="Name"
-                            v-model="template.name"/>
-                </div>
+                Delete template {{ template.name }}?
             </template>
             <template v-slot:modal-button>
                 <div class="form-group mb-0">
                     <button
                             type="button"
-                            class="btn-primary btn"
-                            @click.prevent="update">Update</button>
+                            class="btn-danger btn"
+                            @click.prevent="destroy">Delete</button>
                 </div>
             </template>
         </modal-component>
 
-        <a class="text-secondary text-sm" href="#" @click="updateShowModal(true)">
-            <i class="fas fa-edit"></i>
-            Edit name of template</a>
+        <a class="text-danger text-sm" href="#" @click.prevent="updateShowModal(true)">
+            <i class="fas fa-trash"></i>
+            Delete this template</a>
     </div>
 
 </template>
@@ -46,18 +38,19 @@
         props:
             [
                 'template',
-                'store_template_endpoint',
+                'delete_template_endpoint',
             ],
         methods:
             {
-                update() {
+                destroy() {
                     axios
-                        .post(this.store_template_endpoint, {
-                            name: this.template.name,
-                            id: this.template.id
+                        .post(this.delete_template_endpoint, {
+                            template_id: this.template.id
                         })
                         .then(response =>
                         {
+                            this.$emit('switch-template', response.data);
+
                             this.showModal = false;
                         })
                         .catch(error => {

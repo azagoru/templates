@@ -24,6 +24,7 @@ Vue.component('templates-component', require('./components/TemplatesComponent.vu
 Vue.component('modal-component', require('./components/ModalComponent.vue').default);
 Vue.component('create-template-component', require('./components/CreateTemplateComponent.vue').default);
 Vue.component('edit-template-component', require('./components/EditTemplateComponent.vue').default);
+Vue.component('delete-template-component', require('./components/DeleteTemplateComponent.vue').default);
 
 /**
  * Next, we will create a fresh Vue application instance and attach it to

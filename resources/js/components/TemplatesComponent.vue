@@ -4,16 +4,16 @@
             <div class="col-lg-8 col-sm-6 mb-4">
                 <div class="card shadow-sm">
                     <div class="card-header">Items order</div>
-                    <div class="card-body">
+                    <div class="card-body" v-if="templateItems">
                         <draggable
-                            class="dragArea list-group"
-                            group="items"
+                            class="list-group"
                             :list="templateItems"
+                            group="items"
                             @change="updateTemplateItems">
                             <div
                                 class="p-3 mb-2 bg-light border pointer"
                                 v-for="(item, key) in templateItems"
-                                :key="key">
+                                :key="item.id">
                                 <div class="d-flex justify-content-between align-items-center">
                                     <div>
                                         <div class="mb-1"><span class="badge badge-success">{{ key + 1 }}.</span>&nbsp;{{ item.name }}</div>
@@ -49,25 +49,25 @@
 
                                 <div v-if="template">
                                     <edit-template-component
-                                        v-on:switch-template="setTemplate($event)"
                                         v-bind:template="this.template"
                                         v-bind:store_template_endpoint="store_template_endpoint"></edit-template-component>
                                 </div>
                             </div>
                             <div class="card-footer">
                                 <div v-if="templates && templates.length > 1">
-                                    <a class="text-danger text-sm" href="#" @click.prevent="deleteTemplate">
-                                        <i class="fas fa-trash"></i>
-                                        Delete this template</a>
+                                    <delete-template-component
+                                        v-on:switch-template="unsetTemplate($event)"
+                                        v-bind:template="this.template"
+                                        v-bind:delete_template_endpoint="delete_template_endpoint"></delete-template-component>
                                 </div>
                             </div>
                         </div>
                     </div>
-                    <div class="col-12">
+                    <div class="col-12" v-if="items">
                         <draggable
-                            class="dragArea list-group"
-                            :group="{ name: 'items', pull: 'clone', put: false }"
+                            class="list-group"
                             :list="items"
+                            group="items"
                             :sort="false">
                             <div
                                 class="p-3 bg-white mb-2 border rounded pointer"
@@ -97,7 +97,6 @@ export default
     },
     created()
     {
-        this.getItems();
         this.getTemplates();
     },
     mounted()
@@ -142,7 +141,7 @@ export default
         getItems: function()
         {
             axios
-                .get(this.get_items_endpoint)
+                .get(this.get_items_endpoint + '?template_id=' + this.template.id)
                 .then(response =>
                 {
                     this.items = response.data;
@@ -174,6 +173,8 @@ export default
                 .then(response =>
                 {
                     this.templateItems = response.data;
+
+                    this.getItems();
                 });
         },
         updateTemplateItems: function(evt)
@@ -185,22 +186,15 @@ export default
                 })
                 .then(response =>
                 {
-                    //
+                    this.templateItems = response.data;
                 });
         },
-        deleteTemplate()
+        unsetTemplate(templates)
         {
-            axios
-                .post(this.delete_template_endpoint, {
-                    template_id: this.template.id
-                })
-                .then(response =>
-                {
-                    this.templates = response.data;
-                    this.template = this.templates[0];
+            this.templates = templates;
+            this.template = this.templates[0];
 
-                    this.getTemplateItems();
-                });
+            this.getTemplateItems();
         },
         setTemplate(template)
         {
