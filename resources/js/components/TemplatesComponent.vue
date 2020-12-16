@@ -43,7 +43,7 @@
                                     </select>
 
                                     <create-template-component
-                                        v-on:switch-template="setTemplate($event)"
+                                        v-on:switch-template="addTemplate($event)"
                                         v-bind:store_template_endpoint="store_template_endpoint"></create-template-component>
                                 </div>
 
@@ -198,6 +198,20 @@ export default
             this.getTemplateItems();
         },
         setTemplate(template)
+        {
+            this.template = template;
+
+            for (let key in this.templates) {
+                if (this.templates.hasOwnProperty(key)) {
+                    let template = this.templates[key];
+                    key = parseInt(key);
+                    if (template.id === this.template.id) {
+                        this.templates[key] = this.template;
+                    }
+                }
+            }
+        },
+        addTemplate(template)
         {
             this.templates.push(template);
             this.template = template;
